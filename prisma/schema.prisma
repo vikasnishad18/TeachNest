@@ -1,0 +1,32 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String   // 👈 full name bhi rakho
+  email     String   @unique
+  password  String   // 👈 hashed password
+  role      Role     @default(USER)
+  courses   Course[] // 👈 ek user ke multiple courses ho sakte hain
+  createdAt DateTime @default(now())
+}
+
+model Course {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  userId      Int      // 👈 kisne banaya (foreign key to User)
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  USER
+}
