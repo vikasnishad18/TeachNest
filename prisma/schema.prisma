@@ -1,6 +1,7 @@
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = env("mysql://root:root@localhost:3306/crud_api"
+")
 }
 
 generator client {
@@ -9,11 +10,11 @@ generator client {
 
 model User {
   id        Int      @id @default(autoincrement())
-  name      String   // 👈 full name bhi rakho
+  name      String
   email     String   @unique
-  password  String   // 👈 hashed password
+  password  String
   role      Role     @default(USER)
-  courses   Course[] // 👈 ek user ke multiple courses ho sakte hain
+  courses   Course[]   // 👍 user → many courses
   createdAt DateTime @default(now())
 }
 
@@ -21,7 +22,7 @@ model Course {
   id          Int      @id @default(autoincrement())
   title       String
   description String
-  userId      Int      // 👈 kisne banaya (foreign key to User)
+  userId      Int
   user        User     @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())
 }
