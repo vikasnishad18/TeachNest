@@ -1,7 +1,6 @@
 datasource db {
   provider = "mysql"
-  url      = env("mysql://root:root@localhost:3306/crud_api"
-")
+  url      = env("DATABASE_URL")
 }
 
 generator client {
@@ -10,7 +9,7 @@ generator client {
 
 model User {
   id        Int      @id @default(autoincrement())
-  name      String
+  name      String?
   email     String   @unique
   password  String
   role      Role     @default(USER)

@@ -1,32 +1,39 @@
 // src/app/api/courses/[id]/route.ts
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { getTokenFromHeader, verifyJWT } from "@/lib/jwt";
 import type { NextRequest } from "next/server";
 
+// -------------------------
+// GET COURSE
+// -------------------------
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: number } }
+  context: { params: Promise<{ id: string }> }
 ) {
-  try {
-    const id = params.id;
-    const course = await prisma.course.findUnique({ where: { id } });
-    if (!course)
-      return NextResponse.json({ error: "Not found" }, { status: 404 });
-    return NextResponse.json(course);
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  const { id } = await context.params;
+  const courseId = Number(id);
+
+  const course = await prisma.course.findUnique({
+    where: { id: courseId },
+  });
+
+  if (!course) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
+
+  return NextResponse.json(course);
 }
 
+// -------------------------
+// DELETE COURSE
+// -------------------------
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: number } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params;   // pehle params ko await karo
-    const courseId = id;   // number me convert karo
+    const { id } = await context.params; // ⬅️ required
+    const courseId = Number(id);
 
     await prisma.course.delete({
       where: { id: courseId },
@@ -34,33 +41,32 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error(err);
+    console.error("DELETE ERROR:", err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
 
-
-// ✅ New UPDATE (PUT) route
+// -------------------------
+// UPDATE COURSE (PUT)
+// -------------------------
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: number } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params; // ✅ await lagana zaroori hai
-    const courseId = id;
+    const { id } = await context.params;
+    const courseId = Number(id);
 
-    const body = await req.json();
-    const { title, description } = body;
+    const data = await req.json();
 
-    const updatedCourse = await prisma.course.update({
+    const updated = await prisma.course.update({
       where: { id: courseId },
-      data: { title, description },
+      data,
     });
 
-    return NextResponse.json(updatedCourse);
+    return NextResponse.json(updated);
   } catch (err) {
-    console.error(err);
+    console.error("PUT ERROR:", err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
-

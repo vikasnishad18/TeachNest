@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       data: {
         email,
         password: hashed,
-        role: role === "ADMIN" ? "ADMIN" : "USER",
+        role: role === "ADMIN" ? "ADMIN" : "USER"
       },
     });
 

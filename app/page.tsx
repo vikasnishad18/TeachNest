@@ -32,9 +32,7 @@ export default function Home() {
           <p>Modify or remove data instantly.</p>
         </div>
       </section>
-      <footer className="bg-gray-100 text-center py-6 mt-12">
-        <p className="text-gray-600">© 2025 CRUD App. Built with ❤️ using Next.js & MySQL.</p>
-      </footer>
+      
     </div>
   );
 }
